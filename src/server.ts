@@ -1,5 +1,6 @@
 import 'whatwg-fetch';
 import * as pathToRegExp from 'path-to-regexp';
+import * as errors from 'errors';
 
 export default class Server {
   router: Router;
@@ -11,6 +12,11 @@ export default class Server {
 
   handleRequest(request: Request): Promise<Response> {
     const match: Match = this.router.matchFor(request);
+
+    if (!match) {
+      throw new errors.NoMatchingRoute(`no matching route for ${request.method} ${request.url}`);
+    }
+
     const routeResponse = match.route.respondTo(request, match.params);
     return Promise.resolve(routeResponse);
   }

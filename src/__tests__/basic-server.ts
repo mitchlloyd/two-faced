@@ -3,6 +3,8 @@ import 'whatwg-fetch';
 import { polyfill } from 'es6-promise';
 polyfill();
 
+import * as errors from 'errors';
+
 describe('basic server', function() {
   test('matching a route', function() {
     const server = new Server(router => {
@@ -18,5 +20,14 @@ describe('basic server', function() {
     }).then(json => {
       expect(json).toEqual({ a: 'b' });
     });
+  });
+
+  test('errors with no matching route', function() {
+    const server = new Server(r => {});
+    const request = new Request('http://example.com/foo', { method: 'get' });
+
+    expect(() => {
+      server.handleRequest(request);
+    }).toThrow(errors.NoMatchingRoute)
   });
 });
