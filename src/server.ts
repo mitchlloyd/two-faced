@@ -74,7 +74,7 @@ class Route {
   getMatchingParams(url: string) {
     const regexMatches = this.matcher.exec(url);
 
-    if (regexMatches.length === 0) {
+    if (!regexMatches) {
       return null;
     }
 

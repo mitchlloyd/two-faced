@@ -8,6 +8,10 @@ import * as errors from 'errors';
 describe('basic server', function() {
   test('matching a route', function() {
     const server = new Server(router => {
+      router.get('http://example.com/nomatch', function() {
+        throw new Error('should not match');
+      });
+
       router.get('http://example.com/foo', function() {
         return { a: 'b' };
       });
