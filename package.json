@@ -1,0 +1,19 @@
+{
+  "name": "fake-api",
+  "version": "0.1.0",
+  "description": "A client-side server",
+  "main": "index.js",
+  "author": "Mitch Lloyd <mitch.lloyd@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^20.0.4"
+  },
+  "jest": {
+    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "<rootDir>/preprocessor.js"
+    },
+    "testMatch": ["**/*.test.(ts|tsx|js)"]
+  }
+}
