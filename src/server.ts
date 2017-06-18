@@ -1,6 +1,7 @@
 import 'whatwg-fetch';
 import * as pathToRegExp from 'path-to-regexp';
 import * as errors from 'errors';
+import * as qs from 'qs';
 
 export default class Server {
   router: Router;
@@ -72,16 +73,22 @@ class Route {
   }
 
   getMatchingParams(url: string) {
-    const regexMatches = this.matcher.exec(url);
+    const [urlWithoutSearch, search] = url.split('?');
+
+    const regexMatches = this.matcher.exec(urlWithoutSearch);
 
     if (!regexMatches) {
       return null;
     }
 
-    return this.paramKeys.reduce<QueryParams>((accum, key, index) => {
+    const queryParams = qs.parse(search);
+
+    const urlSegmentParams = this.paramKeys.reduce<QueryParams>((accum, key, index) => {
       accum[key.name] = regexMatches[index + 1];
       return accum;
     }, {});
+
+    return { ...queryParams, ...urlSegmentParams };
   }
 
   respondTo(request: Request, params: QueryParams) {

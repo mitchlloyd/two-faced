@@ -50,5 +50,21 @@ describe('basic server', function() {
       expect(json).toEqual({ id: '1' });
     });
   });
+
+  test('using params from queryParams', function() {
+    const server = new Server(router => {
+      router.get('http://example.com/foo', function(params) {
+        return { name: params.name };
+      });
+    });
+
+    const request = new Request('http://example.com/foo?name=Ellie');
+
+    return server.handleRequest(request).then(response => {
+      return response.json();
+    }).then(json => {
+      expect(json).toEqual({ name: 'Ellie' });
+    });
+  });
 });
 
