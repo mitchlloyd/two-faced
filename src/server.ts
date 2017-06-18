@@ -74,25 +74,25 @@ class Route {
   getMatchingParams(url: string) {
     const regexMatches = this.matcher.exec(url);
 
-    if (!regexMatches) {
+    if (regexMatches.length === 0) {
       return null;
     }
 
     return this.paramKeys.reduce<QueryParams>((accum, key, index) => {
-      accum[key.name] = regexMatches[index];
+      accum[key.name] = regexMatches[index + 1];
       return accum;
     }, {});
   }
 
   respondTo(request: Request, params: QueryParams) {
-    const handlerResponse = this.handler();
+    const handlerResponse = this.handler(params);
     const jsonResponse = JSON.stringify(handlerResponse);
     return new Response(jsonResponse, { status: 200 });
   }
 }
 
 type HTTPVerb = 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS';
-type Handler = () => {};
+type Handler = (params: QueryParams) => {};
 
 interface Match {
   route: Route;
