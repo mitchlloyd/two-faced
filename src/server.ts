@@ -6,7 +6,7 @@ import * as qs from 'qs';
 export default class Server {
   router: Router;
 
-  constructor(addRoutes: (router: Router) => void) {
+  constructor(addRoutes: RouteBuilder) {
     this.router = new Router();
     addRoutes(this.router);
   }
@@ -21,12 +21,14 @@ export default class Server {
     const routeResponse = match.route.respondTo(request, match.params);
     return Promise.resolve(routeResponse);
   }
+
+  prependRoutes(addRoutes: RouteBuilder) {
+    this.router.prependRoutes(addRoutes);
+  }
 }
 
 class Router {
-  private routes: {
-    [key in HTTPVerb]: Array<Route>
-  } = {
+  private routes: RouteRegistry = {
     GET: [],
     PUT: [],
     POST: [],
@@ -56,6 +58,16 @@ class Router {
     }
 
     return match;
+  }
+
+  prependRoutes(addRoutes: RouteBuilder) {
+    const router = new Router();
+    addRoutes(router);
+    const newRoutes = router.routes;
+
+    for (const verb in newRoutes) {
+      this.routes[verb] = [ ...newRoutes[verb], ...this.routes[verb] ];
+    }
   }
 }
 
@@ -109,3 +121,9 @@ interface Match {
 interface QueryParams {
   [key: string]: string;
 }
+
+type RouteRegistry = {
+  [key: string]: Array<Route>;
+}
+
+type RouteBuilder = (router: Router) => void

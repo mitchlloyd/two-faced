@@ -66,5 +66,27 @@ describe('basic server', function() {
       expect(json).toEqual({ name: 'Ellie' });
     });
   });
+
+  test('overriding existing routes', function() {
+    const server = new Server(router => {
+      router.get('http://example.com/foo', function() {
+        throw new Error('should not be called');
+      });
+    });
+
+    server.prependRoutes(router => {
+      router.get('http://example.com/foo', function() {
+        return { success: true };
+      });
+    });
+
+    const request = new Request('http://example.com/foo');
+
+    return server.handleRequest(request).then(response => {
+      return response.json();
+    }).then(json => {
+      expect(json).toEqual({ success: true });
+    });
+  });
 });
 
