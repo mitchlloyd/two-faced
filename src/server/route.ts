@@ -1,36 +1,17 @@
 import * as pathToRegExp from 'path-to-regexp';
-import * as qs from 'qs';
+import RoutePath, { QueryParams } from './utils/route-path';
 
 export default class Route {
-  private path: string;
+  private path: RoutePath;
   private handler: Handler;
-  private matcher: RegExp;
-  private paramKeys: pathToRegExp.Key[];
 
   constructor(path: string, handler: Handler) {
-    this.path = path;
-    this.paramKeys = [];
-    this.matcher = pathToRegExp(path, this.paramKeys);
+    this.path = new RoutePath(path);
     this.handler = handler;
   }
 
-  // TODO: extract as utility
   public getMatchingParams(url: string) {
-    const [urlWithoutSearch, search] = url.split('?');
-    const regexMatches = this.matcher.exec(urlWithoutSearch);
-
-    if (!regexMatches) {
-      return null;
-    }
-
-    const queryParams = qs.parse(search);
-
-    const urlSegmentParams = this.paramKeys.reduce<QueryParams>((accum, key, index) => {
-      accum[key.name] = regexMatches[index + 1];
-      return accum;
-    }, {});
-
-    return { ...queryParams, ...urlSegmentParams };
+    return this.path.getParams(url);
   }
 
   public respondTo(request: Request, params: QueryParams) {
@@ -42,6 +23,4 @@ export default class Route {
 
 export type Handler = (params: QueryParams) => {};
 
-export interface QueryParams {
-  [key: string]: string;
-}
+export { QueryParams };
