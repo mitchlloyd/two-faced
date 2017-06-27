@@ -14,14 +14,9 @@ export default class Server {
   }
 
   public handleRequest(request: Request): Promise<Response> {
-    const match = this.router.matchFor(request);
+    const response = this.router.respondTo(request);
 
-    if (!match) {
-      throw new errors.NoMatchingRoute(`no matching route for ${request.method} ${request.url}`);
-    }
-
-    const routeResponse = match.route.respondTo(request, match.params);
-    return Promise.resolve(routeResponse);
+    return Promise.resolve(response);
   }
 
   public prependRoutes(addRoutes: RouteBuilder) {
