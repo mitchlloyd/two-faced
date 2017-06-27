@@ -3,15 +3,17 @@ import * as errors from 'errors';
 import Router from './router';
 import { RouteBuilder } from './router';
 
-export default class Server {
-  router: Router;
+const noop = () => { /* noop */ };
 
-  constructor(addRoutes: RouteBuilder) {
+export default class Server {
+  private router: Router;
+
+  constructor(addRoutes: RouteBuilder = noop) {
     this.router = new Router();
     addRoutes(this.router);
   }
 
-  handleRequest(request: Request): Promise<Response> {
+  public handleRequest(request: Request): Promise<Response> {
     const match = this.router.matchFor(request);
 
     if (!match) {
@@ -22,7 +24,7 @@ export default class Server {
     return Promise.resolve(routeResponse);
   }
 
-  prependRoutes(addRoutes: RouteBuilder) {
+  public prependRoutes(addRoutes: RouteBuilder) {
     this.router.prependRoutes(addRoutes);
   }
 }

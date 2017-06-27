@@ -5,7 +5,7 @@ export default class Route {
   private path: string;
   private handler: Handler;
   private matcher: RegExp;
-  private paramKeys: Array<pathToRegExp.Key>;
+  private paramKeys: pathToRegExp.Key[];
 
   constructor(path: string, handler: Handler) {
     this.path = path;
@@ -15,7 +15,7 @@ export default class Route {
   }
 
   // TODO: extract as utility
-  getMatchingParams(url: string) {
+  public getMatchingParams(url: string) {
     const [urlWithoutSearch, search] = url.split('?');
     const regexMatches = this.matcher.exec(urlWithoutSearch);
 
@@ -33,7 +33,7 @@ export default class Route {
     return { ...queryParams, ...urlSegmentParams };
   }
 
-  respondTo(request: Request, params: QueryParams) {
+  public respondTo(request: Request, params: QueryParams) {
     const handlerResponse = this.handler(params);
     const jsonResponse = JSON.stringify(handlerResponse);
     return new Response(jsonResponse, { status: 200 });

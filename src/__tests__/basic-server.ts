@@ -27,7 +27,7 @@ describe('basic server', function() {
   });
 
   test('errors with no matching route', function() {
-    const server = new Server(r => {});
+    const server = new Server();
     const request = new Request('http://example.com/foo');
 
     expect(() => {

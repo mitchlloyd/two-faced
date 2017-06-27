@@ -1,4 +1,5 @@
 export class NoMatchingRoute extends Error {
+  // tslint:disable-next-line variable-name
   private __proto__ = NoMatchingRoute.prototype;
 
   constructor(message?: string) {
@@ -6,7 +7,7 @@ export class NoMatchingRoute extends Error {
     this.name = 'NoMatchingRoute';
   }
 
-  toString() {
+  public toString() {
     return this.name + ': ' + this.message;
   }
 }

@@ -1,6 +1,6 @@
 import Route, {
   Handler,
-  QueryParams
+  QueryParams,
 } from './route';
 
 export default class Router {
@@ -13,18 +13,17 @@ export default class Router {
     DELETE: [],
   };
 
-  get(url: string, handler: Handler) {
+  public get(url: string, handler: Handler) {
     const route = new Route(url, handler);
     this.routes.GET.push(route);
   }
 
-  matchFor(request: Request): RouteMatch {
+  public matchFor(request: Request): RouteMatch {
     const method = request.method as HTTPVerb;
     const methodRoutes = this.routes[method];
 
     let match: RouteMatch;
-    for (let i = 0; i < methodRoutes.length; i++) {
-      const route = methodRoutes[i];
+    for (const route of methodRoutes) {
       const params = route.getMatchingParams(request.url);
 
       if (params) {
@@ -36,7 +35,7 @@ export default class Router {
     return match;
   }
 
-  prependRoutes(addRoutes: RouteBuilder) {
+  public prependRoutes(addRoutes: RouteBuilder) {
     const router = new Router();
     addRoutes(router);
     const newRoutes = router.routes;
@@ -47,15 +46,15 @@ export default class Router {
   }
 }
 
-type RouteRegistry = {
-  [key: string]: Array<Route>;
+interface RouteRegistry {
+  [key: string]: Route[];
 }
 
 export interface RouteMatch {
   route: Route;
-  params: QueryParams,
+  params: QueryParams;
 }
 
-export type RouteBuilder = (router: Router) => void
+export type RouteBuilder = (router: Router) => void;
 
 export type HTTPVerb = 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS';

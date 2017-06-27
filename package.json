@@ -6,7 +6,8 @@
   "author": "Mitch Lloyd <mitch.lloyd@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "devDependencies": {
     "@types/es6-promise": "^0.0.32",
@@ -36,5 +37,7 @@
       "**/?(*.)test.ts"
     ]
   },
-  "dependencies": {}
+  "dependencies": {
+    "tslint": "^5.4.3"
+  }
 }
