@@ -6,12 +6,12 @@ import * as errors from 'errors';
 
 export default class Router {
   private routes: RouteRegistry = {
-    GET: [],
-    PUT: [],
-    POST: [],
-    PATCH: [],
-    OPTIONS: [],
-    DELETE: [],
+    [HTTPVerb.Get]: [],
+    [HTTPVerb.Put]: [],
+    [HTTPVerb.Post]: [],
+    [HTTPVerb.Patch]: [],
+    [HTTPVerb.Options]: [],
+    [HTTPVerb.Delete]: [],
   };
 
   public get(url: string, handler: Handler) {
@@ -40,7 +40,7 @@ export default class Router {
   }
 
   private matchFor(request: Request): RouteMatch {
-    const method = request.method as HTTPVerb;
+    const method = request.method;
     const methodRoutes = this.routes[method];
 
     let match: RouteMatch;
@@ -68,4 +68,11 @@ export interface RouteMatch {
 
 export type RouteBuilder = (router: Router) => void;
 
-export type HTTPVerb = 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS';
+enum HTTPVerb {
+  Get = 'GET',
+  Put = 'PUT',
+  Post = 'POST',
+  Patch = 'PATCH',
+  Delete = 'DELETE',
+  Options = 'OPTIONS',
+}
