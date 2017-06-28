@@ -5,14 +5,7 @@ import Route, {
 import * as errors from 'errors';
 
 export default class Router {
-  private routes: RouteRegistry = {
-    [HTTPVerb.Get]: [],
-    [HTTPVerb.Put]: [],
-    [HTTPVerb.Post]: [],
-    [HTTPVerb.Patch]: [],
-    [HTTPVerb.Options]: [],
-    [HTTPVerb.Delete]: [],
-  };
+  private routes = new RouteRegistry();
 
   public get(url: string, handler: Handler) {
     const route = new Route(url, handler);
@@ -34,8 +27,8 @@ export default class Router {
     addRoutes(router);
     const newRoutes = router.routes;
 
-    for (const verb in newRoutes) {
-      this.routes[verb] = [ ...newRoutes[verb], ...this.routes[verb] ];
+    for (const verb in this.routes) {
+      this.routes[verb] = [...newRoutes[verb], ...this.routes[verb]];
     }
   }
 
@@ -57,10 +50,6 @@ export default class Router {
   }
 }
 
-interface RouteRegistry {
-  [key: string]: Route[];
-}
-
 export interface RouteMatch {
   route: Route;
   params: QueryParams;
@@ -68,11 +57,12 @@ export interface RouteMatch {
 
 export type RouteBuilder = (router: Router) => void;
 
-enum HTTPVerb {
-  Get = 'GET',
-  Put = 'PUT',
-  Post = 'POST',
-  Patch = 'PATCH',
-  Delete = 'DELETE',
-  Options = 'OPTIONS',
+class RouteRegistry {
+  public GET: Route[] = [];
+  public PUT: Route[] = [];
+  public POST: Route[] = [];
+  public PATCH: Route[] = [];
+  public OPTIONS: Route[] = [];
+  public DELETE: Route[] = [];
+  [key: string]: Route[];
 }

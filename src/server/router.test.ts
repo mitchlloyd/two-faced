@@ -10,12 +10,12 @@ describe('Router', function() {
     });
 
     // TODO: move response wrapping to server
-    test('`get` adds a route that handles GET requests', async function() {
+    test('`get` adds a route that handles GET requests', function() {
       router.get('/', params => params);
 
       const response = router.respondTo(new Request('/', { method: 'GET' }));
 
-      await expect(response.json()).resolves.toEqual({});
+      expect(response).resolves.toEqual({});
     });
   });
 
