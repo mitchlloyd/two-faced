@@ -15,9 +15,7 @@ export default class Route {
   }
 
   public respondTo(request: Request, params: QueryParams) {
-    const handlerResponse = this.handler(params);
-    const jsonResponse = JSON.stringify(handlerResponse);
-    return new Response(jsonResponse, { status: 200 });
+    return this.handler(params);
   }
 }
 

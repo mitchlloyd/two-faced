@@ -15,8 +15,9 @@ export default class Server {
 
   public handleRequest(request: Request): Promise<Response> {
     const response = this.router.respondTo(request);
-
-    return Promise.resolve(response);
+    const jsonResponse = JSON.stringify(response);
+    const fetchResponse = new Response(jsonResponse);
+    return Promise.resolve(fetchResponse);
   }
 
   public prependRoutes(addRoutes: RouteBuilder) {
