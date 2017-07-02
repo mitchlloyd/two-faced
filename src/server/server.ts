@@ -2,16 +2,23 @@ import 'whatwg-fetch';
 import * as errors from 'errors';
 import Router from './router';
 import RouterDSL from './router-dsl';
+import { AdapterFactory } from './adapters/fetch';
 
 const noop = () => { /* noop */ };
 
 export default class Server {
   private router: Router;
 
-  constructor(addRoutes: RouteBuilderDSL = noop) {
+  constructor(addRoutes: RouteBuilderDSL = noop, options: ServerOptions = {}) {
     this.router = new Router();
     const routerDSL = new RouterDSL(this.router);
     addRoutes(routerDSL);
+
+    if (options.interceptWith) {
+      const Adapter = options.interceptWith;
+      const adapter = new Adapter(this.handleRequest.bind(this));
+      adapter.install();
+    }
   }
 
   public handleRequest(request: Request): Promise<Response> {
@@ -30,3 +37,7 @@ export default class Server {
 }
 
 type RouteBuilderDSL = (router: RouterDSL) => void;
+
+interface ServerOptions {
+  interceptWith?: AdapterFactory;
+}
