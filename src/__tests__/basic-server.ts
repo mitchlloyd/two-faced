@@ -32,7 +32,7 @@ describe('basic server', function() {
 
     expect(() => {
       server.handleRequest(request);
-    }).toThrow(errors.NoMatchingRoute)
+    }).toThrow(errors.NoMatchingRoute);
   });
 
   test('using params from URL segments', function() {

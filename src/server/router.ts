@@ -7,9 +7,9 @@ import * as errors from 'errors';
 export default class Router {
   private routes = new RouteRegistry();
 
-  public get(url: string, handler: Handler) {
+  public addRoute(verb: HTTPVerb, url: string, handler: Handler) {
     const route = new Route(url, handler);
-    this.routes.GET.push(route);
+    this.routes[verb].push(route);
   }
 
   public respondTo(request: Request) {
@@ -27,14 +27,20 @@ export default class Router {
     addRoutes(router);
     const newRoutes = router.routes;
 
-    for (const verb in this.routes) {
+    for (const v in this.routes) {
+      const verb = v as HTTPVerb;
       this.routes[verb] = [...newRoutes[verb], ...this.routes[verb]];
     }
   }
 
   private matchFor(request: Request): RouteMatch {
     const method = request.method;
-    const methodRoutes = this.routes[method];
+
+    if (!(method in this.routes)) {
+      throw new Error(`${method} is not a valid HTTP verb`);
+    }
+
+    const methodRoutes = this.routes[method as HTTPVerb];
 
     let match: RouteMatch;
     for (const route of methodRoutes) {
@@ -64,5 +70,6 @@ class RouteRegistry {
   public PATCH: Route[] = [];
   public OPTIONS: Route[] = [];
   public DELETE: Route[] = [];
-  [key: string]: Route[];
 }
+
+export type HTTPVerb = keyof RouteRegistry;

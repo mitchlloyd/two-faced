@@ -35,7 +35,8 @@
     "testMatch": [
       "**/__tests__/**/*.ts",
       "**/?(*.)test.ts"
-    ]
+    ],
+    "resetMocks": true
   },
   "dependencies": {
     "tslint": "^5.4.3"
