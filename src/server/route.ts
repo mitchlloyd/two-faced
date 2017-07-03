@@ -1,4 +1,3 @@
-import * as pathToRegExp from 'path-to-regexp';
 import RoutePath, { QueryParams } from './utils/route-path';
 
 export default class Route {

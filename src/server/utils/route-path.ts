@@ -1,5 +1,5 @@
-import * as pathToRegExp from 'path-to-regexp';
-import * as qs from 'qs';
+import pathToRegExp from 'path-to-regexp';
+import qs from 'qs';
 
 export default class RoutePath {
   private paramKeys: pathToRegExp.Key[];

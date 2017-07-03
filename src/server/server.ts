@@ -1,13 +1,14 @@
 import 'whatwg-fetch';
-import * as errors from 'errors';
 import Router from './router';
 import RouterDSL from './router-dsl';
 import { AdapterFactory } from './adapters/fetch';
+import DB, { RecordDefinition, RecordAttributes } from 'db';
 
 const noop = () => { /* noop */ };
 
 export default class Server {
   private router: Router;
+  private db: DB = new DB();
 
   constructor(addRoutes: RouteBuilderDSL = noop, options: ServerOptions = {}) {
     this.router = new Router();
@@ -33,6 +34,17 @@ export default class Server {
       const routerDSL = new RouterDSL(router);
       addRoutes(routerDSL);
     });
+  }
+
+  public create<A extends RecordAttributes, T = {}>(
+    recordDefinition: RecordDefinition<A, T>,
+    attrs?: Partial<A & T>,
+  ): A {
+    return this.db.create(recordDefinition, attrs);
+  }
+
+  public find<T extends RecordAttributes>(recordDefinition: RecordDefinition<T>, id: number | string): T {
+    return this.db.find(recordDefinition, id);
   }
 }
 
