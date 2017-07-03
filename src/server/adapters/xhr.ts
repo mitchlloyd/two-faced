@@ -1,44 +1,30 @@
+import { fakeXhr, FakeXMLHttpRequest } from 'nise';
 type RequestHandler = (request: Request) => Promise<Response>;
 
 export default class XMLHttpRequestAdapter implements TransportAdapter {
+  private xhr?: FakeXMLHttpRequest;
+
   constructor(private handleRequest: RequestHandler) {}
 
   public install() {
-    (window as any).XMLHttpRequest = FakeXMLHttpRequestFactory(this.handleRequest);
+    this.xhr = fakeXhr.useFakeXMLHttpRequest();
+    this.xhr.onCreate = (createdXHR: FakeXMLHttpRequest) => {
+      createdXHR.onSend = (xhr: FakeXMLHttpRequest) => {
+        const request = new Request(xhr.url, { method: xhr.method });
+        const fetchResponse = this.handleRequest(request);
+
+        fetchResponse.then(response => {
+          return response.text().then(responseText => {
+            return { responseText, response };
+          });
+        }).then(({ response, responseText }) => {
+          xhr.respond(response.status, response.headers, responseText);
+        });
+      };
+    };
   }
 }
 
 interface TransportAdapter {
   install: () => void;
 }
-
-function FakeXMLHttpRequestFactory(handleRequest: RequestHandler) {
-  return class FakeXMLHTTPRequest {
-    private eventListeners: {
-      [key: string]: EventListener[];
-    } = {
-      load: [],
-    };
-
-    private method?: string;
-    private url?: string;
-
-    public addEventListener(eventName: string, callback: EventListener) {
-      this.eventListeners[eventName].push(callback);
-    }
-
-    public open(method: string, url: string) {
-      this.method = method;
-      this.url = url;
-    }
-
-    public send(): void {
-      const request = new Request(this.url, { method: this.method });
-      const response = handleRequest(request);
-      const responseText = response.then(res => res.text());
-      this.eventListeners.load.forEach(l => l.call({ responseText }));
-    }
-  };
-}
-
-type EventListener = (this: Event) => void;

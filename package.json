@@ -39,6 +39,7 @@
     "resetMocks": true
   },
   "dependencies": {
+    "nise": "https://github.com/sinonjs/nise.git",
     "tslint": "^5.4.3"
   }
 }
