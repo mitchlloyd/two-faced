@@ -35,6 +35,15 @@ describe('basic server', function() {
     }).toThrow(errors.NoMatchingRoute);
   });
 
+  test('errors with unrecognized HTTP verb', function() {
+    const server = new Server();
+    const request = new Request('http://example.com/foo', { method: 'WAT' });
+
+    expect(() => {
+      server.handleRequest(request);
+    }).toThrow(errors.InvalidHTTPMethod);
+  });
+
   test('using params from URL segments', function() {
     const server = new Server(router => {
       router.get('http://example.com/users/:id', function(params) {

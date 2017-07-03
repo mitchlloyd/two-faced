@@ -37,7 +37,7 @@ export default class Router {
     const method = request.method;
 
     if (!(method in this.routes)) {
-      throw new Error(`${method} is not a valid HTTP verb`);
+      throw new errors.InvalidHTTPMethod(method);
     }
 
     const methodRoutes = this.routes[method as HTTPVerb];
