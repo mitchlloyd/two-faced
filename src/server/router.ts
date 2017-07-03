@@ -33,7 +33,7 @@ export default class Router {
     }
   }
 
-  private matchFor(request: Request): RouteMatch {
+  private matchFor(request: Request): RouteMatch | false {
     const method = request.method;
 
     if (!(method in this.routes)) {
@@ -42,7 +42,7 @@ export default class Router {
 
     const methodRoutes = this.routes[method as HTTPVerb];
 
-    let match: RouteMatch;
+    let match: RouteMatch | false = false;
     for (const route of methodRoutes) {
       const params = route.getMatchingParams(request.url);
 
