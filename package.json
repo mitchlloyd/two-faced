@@ -1,5 +1,5 @@
 {
-  "name": "fake-api",
+  "name": "two-faced",
   "version": "0.1.0",
   "description": "A client-side server",
   "main": "index.js",
